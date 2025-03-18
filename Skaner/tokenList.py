@@ -58,9 +58,6 @@ class SymbolsList:
 
     @staticmethod
     def is_valid_number(token: str) -> tuple[bool, int]:
-        if not token:
-            return False, -1
-
         success, pos = SymbolsList.scan_digits(token, 0, True)
         if not success:
             return False, pos
@@ -71,7 +68,7 @@ class SymbolsList:
         if token[pos] == ".":
             success, next_pos = SymbolsList.scan_digits(token, pos + 1, True)
             if not success:
-                return False, next_pos
+                return True, next_pos # potential BZ
 
             if next_pos == len(token):
                 return True, next_pos
@@ -90,7 +87,7 @@ class SymbolsList:
     def tokens_after_e(token: str, pos: int) -> tuple[bool, int]:
         next_pos = pos + 1
         if next_pos >= len(token):
-            return False, pos
+            return True, pos
 
         if not (SymbolsList.is_plus(token[next_pos]) or SymbolsList.is_minus(token[next_pos])):
             return False, next_pos
@@ -98,10 +95,10 @@ class SymbolsList:
         next_pos += 1
         success, next_pos = SymbolsList.scan_digits(token, next_pos, True)
 
-        if not success:
-            return False, next_pos
+        if not success and next_pos == len(token)-1:
+            return True, next_pos
 
-        return next_pos == len(token), next_pos
+        return True, n
 
     @staticmethod
     def isToken(token: str) -> bool:
