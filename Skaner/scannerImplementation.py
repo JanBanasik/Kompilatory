@@ -37,7 +37,7 @@ def scan_expression(expression):
             start = i
             lastValueBZ = i  # position of last 2
             # 2 -> 0 - zapisz bz
-            # 1 -> 0 chuj
+            # 1 -> 0 
             #
             while i < n:
                 res = match_number(expression[start:i + 1])
