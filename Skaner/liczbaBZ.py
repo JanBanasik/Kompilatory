@@ -1,11 +1,14 @@
 def is_digit(char):
     return char in '0123456789'
 
+
 def is_exponent_char(char):
     return char in 'Ee'
 
+
 def is_sign_char(char):
     return char in '+-'
+
 
 def match_number(s):
     n = len(s)
@@ -51,7 +54,3 @@ def match_number(s):
             return 0
     else:
         return 2
-
-
-    return 2
-

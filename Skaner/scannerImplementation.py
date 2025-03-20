@@ -41,7 +41,7 @@ def scan_expression(expression):
             #
             while i < n:
                 res = match_number(expression[start:i + 1])
-                print(expression[start:i+1], res)
+                #print(expression[start:i+1], res)
                 if res == 0:
                     break
                 elif res == 2:
@@ -98,6 +98,7 @@ def scan_expression(expression):
 
 # Przykład użycia
 expression = "25.3e10+3*(76+8/3)+ 3*(9-3)"
+expr2 = "2+3*(76+8/3)+ 3*(9-3)"
 tokens = scan_expression(expression)
 for token in tokens:
     print(token)
