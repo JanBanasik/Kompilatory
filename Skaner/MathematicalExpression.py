@@ -3,7 +3,7 @@ automata = {
         'nawias': 3,
         'operator': 5},
 
-    1: {'cyfra': 0,
+    1: {'cyfra': 1,
         'inne': 2},
 
     3: {'inne': 4},
