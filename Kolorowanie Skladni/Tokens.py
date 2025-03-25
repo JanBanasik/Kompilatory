@@ -1,4 +1,4 @@
-KEYWORDS = ["if", "else", "for", "while", "import", "static", "return", "class"]
+KEYWORDS = ["if", "else", "for", "while", "import", "static", "return", "class", "public"]
 BOOLEANS = ["true", "false"]
 OPERATORS = ["=", "!", "+", "-", "*", "/", "<", ">"]
 BRACKETS = ["(", ")", "[", "]", "{", "}"]
@@ -10,14 +10,9 @@ NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7' '8', '9']
 
 token_colors = {
         'KEYWORDS': 'color: blue; font-weight: bold;',
-        'NUMBER': 'color: green;',
-        'STRING': 'color: red;',
-        'COMMENT': 'color: gray; font-style: italic;',
-        'IDENTIFIER': 'color: black;',
-        'OPERATOR': 'color: purple;',
-        'PUNCTUATION': 'color: brown;',
-        'WHITESPACE': '',
-        'NEWLINE': '',
+        'BOOLEANS': 'color: red; font-weight: bold;',
+        'TYPES': 'color: green; font-weight: bold;',
+        'OPERATORS': 'color: orange;',
     }
 
 automata = {
@@ -65,16 +60,12 @@ def klasyfikuj(znak: str) -> str:
 
 
 def skaner(expression: str, f) -> tuple[str, str, bool]:
-    style = 'color: blue; font-weight: bold;'
+    style = 'color: black;'
     stan = 0
     token: str = ""
     endOfExpr: bool = True
     special = ""
     for index in range(len(expression)):
-        # if expression[index] == "\n" or expression[index] == " " or expression[index] == ";":
-        #     special.append = expression[index]
-        #     continue
-        # else:
         klasyfikacja = klasyfikuj(expression[index])
         if klasyfikacja == 'specjalny':
             special = expression[index]
@@ -90,7 +81,19 @@ def skaner(expression: str, f) -> tuple[str, str, bool]:
         stan = automata[stan]['inne']
 
     if token != "":
-        f.write(f'<span style="{style}">{token}</span>')
+        if stanyKoncowe[stan] in ['Nawias', 'liczba']:
+            f.write(f'<span style="{style}">{token}</span>')
+        elif stanyKoncowe[stan] == 'Operator':
+            f.write(f'<span style="{token_colors['OPERATORS']}">{token}</span>')
+        else:
+            if token in KEYWORDS:
+                f.write(f'<span style="{token_colors['KEYWORDS']}">{token}</span>')
+            elif token in BOOLEANS:
+                f.write(f'<span style="{token_colors['BOOLEANS']}">{token}</span>')
+            elif token in TYPES:
+                f.write(f'<span style="{token_colors['TYPES']}">{token}</span>')
+            else:
+                f.write(f'<span style="{style}">{token}</span>')
     if special != "":
         if special == '\n':
             f.write("<br>")
