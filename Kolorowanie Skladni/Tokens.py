@@ -3,12 +3,13 @@ BOOLEANS = ["true", "false"]
 OPERATORS = ["=", "!", "+", "-", "*", "/", "<", ">"]
 BRACKETS = ["(", ")", "[", "]", "{", "}"]
 TYPES = ["int", "String", "void"]
-SPECIALS = [';']
+SPECIALS = [';', ' ', '\n', "\""]
+NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7' '8', '9']
 
 
 
 token_colors = {
-        'KEYWORD': 'color: blue; font-weight: bold;',
+        'KEYWORDS': 'color: blue; font-weight: bold;',
         'NUMBER': 'color: green;',
         'STRING': 'color: red;',
         'COMMENT': 'color: gray; font-style: italic;',
@@ -23,20 +24,30 @@ automata = {
     0: {'znak': 1,
         'nawias': 3,
         'operator': 5,
-        'specjalny': 7},
+        'specjalny': 7,
+        'cyfra': 8},
 
     1: {'znak': 1,
-        'inne': 2},
+        'cyfra': 1,
+        'inne': 2,
+        'specjalny': 2},
 
-    3: {'inne': 4},
+    3: {'inne': 4,
+        'specjalny': 4},
 
-    5: {'inne': 6}
+    5: {'inne': 6,
+        'specjalny': 6},
+
+    8: {'cyfra': 8,
+        'inne': 9,
+        'specjalny': 9}
 }
 
 stanyKoncowe = {2: 'identyfikator',
                 4: 'Nawias',
                 6: 'Operator',
-                7: 'specjalny'}
+                7: 'specjalny',
+                9: 'liczba'}
 
 
 def klasyfikuj(znak: str) -> str:
@@ -48,44 +59,45 @@ def klasyfikuj(znak: str) -> str:
         return "specjalny"
     elif znak in OPERATORS:
         return 'operator'
-    elif znak == '\n':
-        return "nowaLinia"
-    elif znak == " ":
-        return "spacja"
+    elif znak in NUMBERS:
+        return 'cyfra'
     return "inne"
 
 
-def skaner(expression: str, f) -> tuple[str, str]:
+def skaner(expression: str, f) -> tuple[str, str, bool]:
     style = 'color: blue; font-weight: bold;'
     stan = 0
     token: str = ""
     endOfExpr: bool = True
+    special = ""
     for index in range(len(expression)):
-        if expression[index] == "\n":
-            f.write(f'<span style="{style}">{token}</span>')
-            f.write('<br>')
-            return ("chuj", token + "\n")
-        elif expression[index].isspace():
-            f.write(" ")
-        else:
-            klasyfikacja = klasyfikuj(expression[index])
-
-            if klasyfikacja not in automata[stan]:
-                klasyfikacja = 'inne'
-            print(stan, klasyfikacja, token, expression[index])
-            stan = automata[stan][klasyfikacja]
-            print(stan)
-            if stan in stanyKoncowe:
-                endOfExpr = False
-                break
-            token += expression[index]
+        # if expression[index] == "\n" or expression[index] == " " or expression[index] == ";":
+        #     special.append = expression[index]
+        #     continue
+        # else:
+        klasyfikacja = klasyfikuj(expression[index])
+        if klasyfikacja == 'specjalny':
+            special = expression[index]
+        if klasyfikacja not in automata[stan]:
+            klasyfikacja = 'inne'
+        stan = automata[stan][klasyfikacja]
+        if stan in stanyKoncowe:
+            endOfExpr = False
+            break
+        token += expression[index]
 
     if endOfExpr:
         stan = automata[stan]['inne']
 
-    f.write(f'<span style="{style}">{token}</span>')
+    if token != "":
+        f.write(f'<span style="{style}">{token}</span>')
+    if special != "":
+        if special == '\n':
+            f.write("<br>")
+        else:
+            f.write(special)
 
-    return stanyKoncowe[stan], token
+    return stanyKoncowe[stan], token, special != ""
 
 
 input_text = open("program.txt", "r").read()
@@ -94,6 +106,10 @@ f.write('<html><head><style>body { font-family: monospace; }</style></head><body
 
 i = 0
 while i < len(input_text):
-    typ, wartosc = skaner(input_text[i:], f)
+    typ, wartosc, wasSpecial = skaner(input_text[i:], f)
     i += len(wartosc)
+    if wasSpecial:
+        i += 1
     print(f"({typ}, {wartosc}) {i=}")
+
+f.write('</pre></body></html>')
