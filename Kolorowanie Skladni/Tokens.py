@@ -1,4 +1,4 @@
-KEYWORDS = ["if", "else", "for", "while", "import", "static", "return", "class", "public"]
+KEYWORDS = ["break", "if", "else", "for", "while", "import", "static", "return", "class", "public"]
 BOOLEANS = ["true", "false"]
 OPERATORS = ["=", "!", "+", "-", "*", "/", "<", ">"]
 BRACKETS = ["(", ")", "[", "]", "{", "}"]
